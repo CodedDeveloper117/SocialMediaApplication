@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom'
-import { client } from '../container/client';
 import { searchQuery, feedQuery } from '../utils/data';
 import MasonryLayout from './MasonryLayout'
 import Spinner from './Spinner'
@@ -12,7 +11,7 @@ const Feed = () => {
   console.log("llo")
 
   useEffect(() => {
-    if(categoryId) {
+    /* if(categoryId) {
       const query = searchQuery(categoryId);
       client.fetch(query)
         .then(data => setPins(data))
@@ -22,7 +21,7 @@ const Feed = () => {
       client.fetch(feedQuery)
         .then(data => setPins(data))
         .catch(e => console.log(e))
-    }
+    } */
   }, [categoryId])
 
   if(loading) return <Spinner message="We are adding new ideas to your feed" />

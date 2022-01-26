@@ -4,14 +4,7 @@ import { RiHomeFill } from "react-icons/ri";
 import { IoHomeOutline } from "react-icons/io5";
 import { IoIosArrowForward } from "react-icons/io";
 import logo from "../assets/logo.png";
-
-const categories = [
-  { catogory: "Animals" },
-  { catogory: "Wallpapers" },
-  { catogory: "Photography" },
-  { catogory: "Gaming" },
-  { catogory: "Coding" },
-];
+import { categories } from '../utils/categories'
 const isNotActiveStyle =
   "flex item-center px-5 gap-3 text-gray-500 text-xs hover:text-black transition-all duration-200 ease-in-out capitalize";
 const isActiveStyle =
@@ -43,15 +36,15 @@ const Sidebar = ({ user, closeToggle }) => {
             Home
           </NavLink>
           <h3 className="px-5 text-sm">Discover Categories</h3>
-          {categories.map((data) => (
+          {categories.map((category) => (
             <NavLink
-              to={`/category/${data.catogory}`}
+              to={`/category/${category.name}`}
               className={({ isActive }) =>
                 isActive ? isActiveStyle : isNotActiveStyle
               }
-              key={data.catogory}
+              key={category.name}
             >
-              {data.catogory}
+              {category.name}
             </NavLink>
           ))}
         </div>

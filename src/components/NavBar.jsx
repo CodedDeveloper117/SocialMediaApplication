@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import SearchBar from "./SearchBar";
 import { Link, useNavigate } from "react-router-dom";
 import { IoSearch, IoAdd } from "react-icons/io5";
+import { useSelector } from "react-redux";
 
-const NavBar = ({ user }) => {
+const NavBar = () => {
   const navigate = useNavigate();
-
-    if(!user) return null
+  const user = useSelector(state => state.user)
+  console.log(user.data.image)
+  if(!user) return null
 
   return (
     <div className="flex gap-2 md:gap-5 mt-3 pd-7">
@@ -22,8 +24,8 @@ const NavBar = ({ user }) => {
         />
       </div>
       <div className="flex gap-3 items-center">
-        <Link to="/user-profile/${user._id}" className="hidden md:block">
-          <img className="w-9 h-9 rounded-full inline-block" src={user.image} />
+        <Link to={`/user-profile/${user._id}`} className="hidden md:block">
+          <img className="w-9 h-9 rounded-full inline-block" src={user.data.image} />
         </Link>
         <Link
           to="create-pin"

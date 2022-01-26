@@ -1,24 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import { AiOutlineLogout } from 'react-icons/ai';
-import { useParams, useNavigate } from 'react-router-dom';
-import { GoogleLogout } from 'react-google-login';
+import React, { useEffect, useState } from "react";
+import { AiOutlineLogout, AiOutlineEdit } from "react-icons/ai";
+import { IoCreateOutline } from 'react-icons/io5'
+import { useParams, useNavigate } from "react-router-dom";
+import { GoogleLogout } from "react-google-login";
 
 //import { userCreatedPinsQuery, userQuery, userSavedPinsQuery } from '../utils/data';
 //import { client } from '../client';
-import MasonryLayout from './MasonryLayout';
-import Spinner from './Spinner';
+import MasonryLayout from "./MasonryLayout";
+import Spinner from "./Spinner";
 
-const activeBtnStyles = 'bg-red-500 text-white font-bold p-2 rounded-full w-20 outline-none';
-const notActiveBtnStyles = 'bg-primary mr-4 text-black font-bold p-2 rounded-full w-20 outline-none';
+const activeBtnStyles =
+  "bg-red-500 text-white text-xs font-bold p-2 rounded-full outline-none transition-all duration-500ms";
+const notActiveBtnStyles =
+  "bg-primary text-xs text-black font-bold p-2 rounded-full outline-none";
 const image =
   "https://cdn.pixabay.com/photo/2022/01/18/16/49/town-6947538__340.jpg";
 const UserProfile = () => {
   const [user, setUser] = useState();
   const [pins, setPins] = useState();
-  const [text, setText] = useState('Created');
-  const [activeBtn, setActiveBtn] = useState('created');
+  const [text, setText] = useState("Created");
+  const [activeBtn, setActiveBtn] = useState("created");
   const navigate = useNavigate();
   const { userId } = useParams();
+  
 
   //const User = localStorage.getItem('user') !== 'undefined' ? JSON.parse(localStorage.getItem('user')) : localStorage.clear();
 
@@ -48,7 +52,7 @@ const UserProfile = () => {
   const logout = () => {
     localStorage.clear();
 
-    navigate('/login');
+    navigate("/login");
   };
 
   if (false) return <Spinner message="Loading profile" />;
@@ -59,7 +63,7 @@ const UserProfile = () => {
         <div className="relative flex flex-col mb-7">
           <div className="flex flex-col justify-center items-center">
             <img
-              className=" w-full h-370 2xl:h-510 shadow-lg object-cover"
+              className=" w-full h-370 shadow-lg object-cover"
               src="https://source.unsplash.com/1600x900/?nature,photography,technology"
               alt="user-pic"
             />
@@ -69,9 +73,30 @@ const UserProfile = () => {
               alt="user-pic"
             />
           </div>
-          <h1 className="font-bold text-3xl text-center mt-3">
+          <h1 className="font-bold text-sm text-center mt-3 flex items-center justify-center gap-1">
             username
+            <button
+              type="button"
+              className="bg-white p-1 rounded-full cursor-pointer outline-none"
+              onClick={() => {}}
+            >
+              <IoCreateOutline fontSize={16} />
+            </button>
           </h1>
+          <div className="text-xs flex items-center gap-2 ml-2">
+            Your Bio
+            <button
+              type="button"
+              className="bg-white p-1 rounded-full cursor-pointer outline-none"
+              onClick={() => {}}
+            >
+              <IoCreateOutline fontSize={16} />
+            </button>
+          </div>
+          <div className="text-xs text-center mt-1 border border-gray-500 rounded-md p-2 mx-2">
+            Hello my name is Emmanuel Stanley and I'm using this awesome
+            application, you should check it out
+          </div>
           <div className="absolute top-0 z-1 right-0 p-2">
             {true && (
               <GoogleLogout
@@ -83,7 +108,7 @@ const UserProfile = () => {
                     onClick={renderProps.onClick}
                     disabled={renderProps.disabled}
                   >
-                    <AiOutlineLogout color="red" fontSize={21} />
+                    <AiOutlineLogout color="red" fontSize={20} />
                   </button>
                 )}
                 onLogoutSuccess={logout}
@@ -97,9 +122,11 @@ const UserProfile = () => {
             type="button"
             onClick={(e) => {
               setText(e.target.textContent);
-              setActiveBtn('created');
+              setActiveBtn("created");
             }}
-            className={`${activeBtn === 'created' ? activeBtnStyles : notActiveBtnStyles}`}
+            className={`${
+              activeBtn === "created" ? activeBtnStyles : notActiveBtnStyles
+            }`}
           >
             Created
           </button>
@@ -107,9 +134,11 @@ const UserProfile = () => {
             type="button"
             onClick={(e) => {
               setText(e.target.textContent);
-              setActiveBtn('saved');
+              setActiveBtn("saved");
             }}
-            className={`${activeBtn === 'saved' ? activeBtnStyles : notActiveBtnStyles}`}
+            className={`${
+              activeBtn === "saved" ? activeBtnStyles : notActiveBtnStyles
+            }`}
           >
             Saved
           </button>
@@ -120,12 +149,11 @@ const UserProfile = () => {
         </div>
 
         {1 === 0 && (
-        <div className="flex justify-center font-bold items-center w-full text-1xl mt-2">
-          No Pins Found!
-        </div>
+          <div className="flex justify-center font-bold items-center w-full mt-2">
+            No Pins Found!
+          </div>
         )}
       </div>
-
     </div>
   );
 };

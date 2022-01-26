@@ -1,29 +1,29 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import GoogleLogin from "react-google-login";
 import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import shareVideo from "../assets/share.mp4";
 import logo from "../assets/logowhite.png";
-import { client } from '../container/client'
+import { useDispatch } from 'react-redux'
+import { createUser } from "../redux/slices/userSlice";
+import { useSelector } from 'react-redux'
+import Spinner from "./Spinner";
 
 const Login = () => {
   const navigate = useNavigate()
-  const successResponse = (response) => {
-    localStorage.setItem("user", JSON.stringify(response.profileObj))
-    const { name, googleId, imageUrl } = response.profileObj;
-    const doc = {
-      _id: googleId,
-      _type: "user",
-      username: name, 
-      image: imageUrl
+  const dispatch = useDispatch()
+  const state = useSelector(state => state.user);
+  const [firstLaunch, setFirstLaunch] = useState(false)
+  useEffect(() => {
+    if(state.data !== null && firstLaunch) {
+      navigate("/")
+    } else {
+
     }
-    client.createIfNotExists(doc)
-    .then((value) => {
-      navigate("/", {replace: true})
-    })
-    .catch(e => {
-      console.log(e);
-    })
+  }, [state])
+  const successResponse = (response) => {
+    setFirstLaunch(true)
+    dispatch(createUser(response.profileObj))
   }
 
   const failureResponse = (response) => {
@@ -32,7 +32,10 @@ const Login = () => {
   }
 
   return (
-    <div className="flex justify-start items-center flex-col h-screen">
+    <div className="flex relative justify-start items-center flex-col h-screen">
+      {/* <div className="absolute flex justify-center items-center top-0 left-0 w-full h-full">
+        <Spinner />
+      </div> */}
       <div className="relative w-full h-full">
         <video
           src={shareVideo}

@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { urlFor, client } from "../container/client";
 import { v4 as uuidV4 } from "uuid";
 import {
   IoDownload,
   IoDownloadOutline,
   IoBookmarkOutline,
+  IoBookmark,
   IoChevronForwardCircle,
+  IoTrashOutline
 } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
@@ -19,13 +20,14 @@ const images = [
   "https://cdn.pixabay.com/photo/2022/01/16/13/25/cityscape-6942013__340.jpg",
   "https://cdn.pixabay.com/photo/2021/12/28/11/36/castle-6899041__340.jpg",
   "https://cdn.pixabay.com/photo/2022/01/18/23/31/farm-6948514__340.jpg",
-  "https://cdn.pixabay.com/photo/2022/01/16/10/51/leaves-6941709__340.jpg"
-]
+  "https://cdn.pixabay.com/photo/2022/01/16/10/51/leaves-6941709__340.jpg",
+];
 
 const Pin = ({ id, lastItem }) => {
   const [postHovered, setPostHovered] = useState(false);
   const navigate = useNavigate();
   const [savingPost, setSavingPost] = useState(false);
+  const [destinationHovered, setDestinationHovered] = useState(false)
 
   /* const alreadySaved = !!(save?.filter((item) => item.postedBy._id == user._id))
     .length; */
@@ -49,7 +51,7 @@ const Pin = ({ id, lastItem }) => {
   };
 
   return (
-    <div className={`${lastItem ? "" : "mr-1" } mt-1`}>
+    <div className={`${lastItem ? "" : "mr-1"} mt-1`}>
       <div
         onMouseEnter={() => {
           setPostHovered(true);
@@ -59,7 +61,11 @@ const Pin = ({ id, lastItem }) => {
         }}
         className="relative cursor-zoom-in w-auto hover:shadow-lg rounded-lg overflow-hidden transition-all duration-500 ease-in-out"
       >
-        <img className="rounded-lg w-full object-cover" alt="image" src={images[id]} />
+        <img
+          className="rounded-lg w-full object-cover"
+          alt="image"
+          src={images[id]}
+        />
         {postHovered && (
           <div
             className="absolute top-0 left-0 w-full h-full flex flex-col justify-between p-1 pr-2 pt-2 pb-2 z-50"
@@ -94,7 +100,7 @@ const Pin = ({ id, lastItem }) => {
                   type="button"
                   className="bg-red-500 opacity-70 hover:opacity-100 text-white font-bold px-2 py-0.5 text-base rounded-3xl hover:shadow-md outlined-none"
                 >
-                  Save
+                  <IoBookmark />
                 </button>
               )}
             </div>
@@ -103,17 +109,50 @@ const Pin = ({ id, lastItem }) => {
                 href="destination"
                 target="black"
                 rel="noreferrer"
-                className="bg-white flex items-center gap-2 text-black font-bold p-2 px-2 py-0.5 rounded-full opacity-70 hover:opacity-100 hover:shadow-md"
+                onMouseEnter={() => {
+                  setDestinationHovered(true)
+                }}
+                onMouseLeave={() => {
+                  setDestinationHovered(false)
+                }}
+                className="bg-white flex items-center py-1 text-black font-bold px-1 rounded-full opacity-70 hover:opacity-100 hover:shadow-md"
               >
-                <IoChevronForwardCircle />
+                <IoChevronForwardCircle fontSize={16} />
+                <div
+                  style={{
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    maxLines: 1,
+                    whiteSpace: 'nowrap',
+                    fontSize: '0.45rem',
+                    width: destinationHovered ? '130px' : "0px",
+                    transition: 'all 500ms ease-in-out'
+                  }}
+                >
+                  {images[0]}
+                </div>
               </a>
+              <a
+                  href={`$"{image?.asset?.url"}?id=`}
+                  className="bg-white hover:opacity-100 hover:shadow-md outline-none rounded-full text-dark text-md w-6 h-6 items-center flex justify-center opacity-75"
+                  download
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <IoTrashOutline />
+                </a>
             </div>
           </div>
         )}
       </div>
       <div className="flex items-center justify-start gap-1 mt-1 ">
-          <img src={images[id]} alt="image" className="object-cover w-5 h-5 rounded-full" />
-          <p className="text-dark font-semibold" style={{ fontSize: "0.55rem" }} >Emmanuel Stanley</p>
+        <img
+          src={images[id]}
+          alt="image"
+          className="object-cover w-5 h-5 rounded-full"
+        />
+        <p className="text-dark font-semibold" style={{ fontSize: "0.55rem" }}>
+          Emmanuel Stanley
+        </p>
       </div>
     </div>
   );

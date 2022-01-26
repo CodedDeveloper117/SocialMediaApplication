@@ -1,33 +1,42 @@
 import React, { useState, useEffect, useRef } from "react";
 import { HiMenu } from "react-icons/hi";
 import { IoClose } from "react-icons/io5";
-import { Link, Route, Routes } from "react-router-dom";
+import { Link, Route, Routes, Navigate } from "react-router-dom";
 import { NavBar, PinDetail, CreatePin, Search, Feed } from "../components";
 import { Sidebar, UserProfile } from "../components";
-import { client } from "./client";
 import logo from "../assets/logo.png";
 import Pins from "./Pins";
+import { useDispatch, useSelector } from "react-redux";
 import { userQuery } from "../utils/data";
+import { getUser } from "../redux/slices/userSlice";
+import Spinner from "../components/Spinner";
 
 const Home = () => {
   const [toggleSidebar, setToggleSidebar] = useState(false);
-  const userInfo =
-    localStorage.getItem("user") !== "undefined"
-      ? JSON.parse(localStorage.getItem("user"))
-      : localStorage.clear();
-  const [user, setUser] = useState(null);
+  const user = useSelector((state) => state.user.data);
+  const [userExists, setUserExists] = useState(true)
   const scrollRef = useRef(null);
+  const dispatch = useDispatch()
   useEffect(() => {
-    const query = userQuery(userInfo?.googleId);
-    client.fetch(query).then((data) => {
-      console.log(data);
-      setUser(data[0]);
-    });
+    const userID = localStorage.getItem("userID", null)
+    if(userID) {
+      dispatch(getUser(userID))
+    } else {
+      setUserExists(false)
+    }
   }, []);
 
   useEffect(() => {
-    scrollRef.current.scrollTo(0, 0);
+    //scrollRef?.current.scrollTo(0, 0);
   }, []);
+
+  if(!user && userExists) return (
+    <div className="w-full h-screen flex items-center justify-center" style={{ backgroundColor: "rgba(255,255,255,0.7)" }}>
+      <Spinner message="Please wait while we get user information..." />
+    </div>
+  )
+
+  if(!userExists) return <Navigate to="/login" />
 
   return (
     <div className="flex bg-gray-50 md:flex-row flex-col h-screen transaction-height duration-75 ease-out">
@@ -46,7 +55,7 @@ const Home = () => {
             <img src={logo} alt="logo" className="w-28 inline-block" />
           </Link>
           <Link to={`user-profile/${user?._id}`}>
-            <img className="w-7 rounded-full inline-block" src={user?.image} />
+            <img className="w-7 rounded-full inline-block" src={user.image} />
           </Link>
         </div>
         {toggleSidebar && (
@@ -66,6 +75,7 @@ const Home = () => {
         <Routes>
           <Route path="/user-profile/:userId" element={<UserProfile />} />
           <Route path="/" element={<Pins user={user && user} />}>
+            
             <Route path="/" element={<Feed />} />
             <Route path="category/:categoryId" element={<Feed />} />
             <Route path="pin-detail/:pinId" element={<PinDetail />} />
