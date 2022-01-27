@@ -23,7 +23,7 @@ const images = [
   "https://cdn.pixabay.com/photo/2022/01/16/10/51/leaves-6941709__340.jpg",
 ];
 
-const Pin = ({ id, lastItem }) => {
+const Pin = ({ post, lastItem }) => {
   const [postHovered, setPostHovered] = useState(false);
   const navigate = useNavigate();
   const [savingPost, setSavingPost] = useState(false);
@@ -51,7 +51,7 @@ const Pin = ({ id, lastItem }) => {
   };
 
   return (
-    <div className={`${lastItem ? "" : "mr-1"} mt-1`}>
+    <div className={`${lastItem ? "" : "mr-1"} mt-1 cursor-pointer`}>
       <div
         onMouseEnter={() => {
           setPostHovered(true);
@@ -64,7 +64,7 @@ const Pin = ({ id, lastItem }) => {
         <img
           className="rounded-lg w-full object-cover"
           alt="image"
-          src={images[id]}
+          src={post.image.image.asset.url}
         />
         {postHovered && (
           <div
@@ -115,7 +115,7 @@ const Pin = ({ id, lastItem }) => {
                 onMouseLeave={() => {
                   setDestinationHovered(false)
                 }}
-                className="bg-white flex items-center py-1 text-black font-bold px-1 rounded-full opacity-70 hover:opacity-100 hover:shadow-md"
+                className="bg-white flex items-center py-1 text-black font-bold px-1 rounded-full opacity-70 hover:opacity-100 hover:shadow-md "
               >
                 <IoChevronForwardCircle fontSize={16} />
                 <div
@@ -124,12 +124,12 @@ const Pin = ({ id, lastItem }) => {
                     textOverflow: "ellipsis",
                     maxLines: 1,
                     whiteSpace: 'nowrap',
-                    fontSize: '0.45rem',
-                    width: destinationHovered ? '130px' : "0px",
+                    fontSize: '0.55rem',
+                    width: destinationHovered ? '110px' : "0px",
                     transition: 'all 500ms ease-in-out'
                   }}
                 >
-                  {images[0]}
+                  {post.destination}
                 </div>
               </a>
               <a
@@ -146,12 +146,12 @@ const Pin = ({ id, lastItem }) => {
       </div>
       <div className="flex items-center justify-start gap-1 mt-1 ">
         <img
-          src={images[id]}
+          src={post.author.image}
           alt="image"
-          className="object-cover w-5 h-5 rounded-full"
+          className="object-cover w-30 h-30 rounded-full"
         />
-        <p className="text-dark font-semibold" style={{ fontSize: "0.55rem" }}>
-          Emmanuel Stanley
+        <p className="text-dark font-semibold text-sm">
+          {post.author.username}
         </p>
       </div>
     </div>

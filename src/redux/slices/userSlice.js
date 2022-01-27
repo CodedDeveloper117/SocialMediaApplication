@@ -34,8 +34,12 @@ export const getUser = createAsyncThunk(
       const query = userQuery(userId)
       try {
         const user = await client.fetch(query);
-        return fulfillWithValue(user[0])
+        if(user.length !== 0) {
+          return fulfillWithValue(user[0])
+        }
+        return rejectWithValue("user doesn't exist")
       } catch (err) {
+        console.log(err)
         return rejectWithValue(err);
       }
     }
@@ -46,7 +50,7 @@ const userSlice = createSlice({
   initialState: {
     data: null,
     loading: false,
-    error: "",
+    error: null,
     currentRequestId: ''
   },
   reducers: {},
@@ -104,7 +108,7 @@ const userSlice = createSlice({
           state.currentRequestId === requestId
         ) {
           state.loading = false
-          state.error = action.error
+          state.error = { ...action.error, err: action.payload }
           state.currentRequestId = ''
         }
       })

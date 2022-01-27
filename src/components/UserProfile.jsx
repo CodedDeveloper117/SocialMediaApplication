@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { AiOutlineLogout, AiOutlineEdit } from "react-icons/ai";
-import { IoCreateOutline } from 'react-icons/io5'
+import { IoCreateOutline } from "react-icons/io5";
 import { useParams, useNavigate } from "react-router-dom";
 import { GoogleLogout } from "react-google-login";
+import { client } from "../utils/client";
+import { userQuery } from "../utils/data";
 
 //import { userCreatedPinsQuery, userQuery, userSavedPinsQuery } from '../utils/data';
 //import { client } from '../client';
 import MasonryLayout from "./MasonryLayout";
 import Spinner from "./Spinner";
+import EditContainer from "./EditContainer";
 
 const activeBtnStyles =
   "bg-red-500 text-white text-xs font-bold p-2 rounded-full outline-none transition-all duration-500ms";
@@ -22,16 +25,19 @@ const UserProfile = () => {
   const [activeBtn, setActiveBtn] = useState("created");
   const navigate = useNavigate();
   const { userId } = useParams();
-  
-
-  //const User = localStorage.getItem('user') !== 'undefined' ? JSON.parse(localStorage.getItem('user')) : localStorage.clear();
+  const [loading, setLoading] = useState(true);
+  const [inProp, setInProp] = useState(false)
+  const [showModal, setShowModal] = useState(false)
 
   useEffect(() => {
-    /* const query = userQuery(userId);
+    setLoading(true);
+    const query = userQuery(userId);
     client.fetch(query).then((data) => {
       setUser(data[0]);
-    }); */
-  }, [userId]);
+      setLoading(false);
+    });
+    //console.log(user, "Hello");
+  }, []);
 
   useEffect(() => {
     /* if (text === 'Created') {
@@ -48,17 +54,26 @@ const UserProfile = () => {
       });
     } */
   }, [text, userId]);
-
   const logout = () => {
     localStorage.clear();
 
     navigate("/login");
   };
 
-  if (false) return <Spinner message="Loading profile" />;
+  if (loading && !user) {
+    console.log("user")
+    return (
+      <div className="w-full h-full justify-center items-center">
+        <Spinner message="Loading profile..." />
+      </div>
+    );
+  }
 
   return (
     <div className="relative pb-2 h-full justify-center items-center">
+      {inProp && (
+        <EditContainer inProp={inProp} setInProp={setInProp} />
+      )}
       <div className="flex flex-col pb-5">
         <div className="relative flex flex-col mb-7">
           <div className="flex flex-col justify-center items-center">
@@ -68,17 +83,19 @@ const UserProfile = () => {
               alt="user-pic"
             />
             <img
-              className="rounded-full w-20 h-20 -mt-10 shadow-xl object-cover"
-              src={image}
+              className="rounded-full w-60 h-60 -mt-10 shadow-xl object-cover"
+              src={user.image}
               alt="user-pic"
             />
           </div>
           <h1 className="font-bold text-sm text-center mt-3 flex items-center justify-center gap-1">
-            username
+            {user.username}
             <button
               type="button"
               className="bg-white p-1 rounded-full cursor-pointer outline-none"
-              onClick={() => {}}
+              onClick={() => {
+                setInProp(true)
+              }}
             >
               <IoCreateOutline fontSize={16} />
             </button>
@@ -88,14 +105,15 @@ const UserProfile = () => {
             <button
               type="button"
               className="bg-white p-1 rounded-full cursor-pointer outline-none"
-              onClick={() => {}}
+              onClick={() => {
+                setInProp(true)
+              }}
             >
               <IoCreateOutline fontSize={16} />
             </button>
           </div>
           <div className="text-xs text-center mt-1 border border-gray-500 rounded-md p-2 mx-2">
-            Hello my name is Emmanuel Stanley and I'm using this awesome
-            application, you should check it out
+            {user.bio}
           </div>
           <div className="absolute top-0 z-1 right-0 p-2">
             {true && (

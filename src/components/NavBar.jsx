@@ -24,7 +24,7 @@ const NavBar = () => {
         />
       </div>
       <div className="flex gap-3 items-center">
-        <Link to={`/user-profile/${user._id}`} className="hidden md:block">
+        <Link to={`/user-profile/${user.data._id}`} className="hidden md:block">
           <img className="w-9 h-9 rounded-full inline-block" src={user.data.image} />
         </Link>
         <Link

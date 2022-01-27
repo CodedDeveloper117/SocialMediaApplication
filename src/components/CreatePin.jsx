@@ -5,8 +5,7 @@ import { IoTrash } from "react-icons/io5";
 import { categories } from "../utils/categories";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { createPost } from "../redux/slices/postSlice";
-import { getUser } from "../redux/slices/userSlice";
+import { createPost } from "../redux/slices/posts/createPost";
 
 const image =
   "https://cdn.pixabay.com/photo/2022/01/18/16/49/town-6947538__340.jpg";
@@ -27,13 +26,13 @@ const CreatePin = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.data);
   const posts = useSelector((state) => state.posts);
-  const [showMessage, setShowMessage] = useState(hideMessageClass);
+  const [showMessage, setShowMessage] = useState(false);
 
   useEffect(() => {
-    if (posts.loading === false && posts.data) {
-      setShowMessage(showMessageClass);
+    if (posts.loading === false && posts.createOperationSuccess) {
+      setShowMessage(true);
       setTimeout(() => {
-        setShowMessage(hideMessageClass);
+        setShowMessage(false);
       }, 3000);
     }
   }, [posts.loading]);
@@ -91,7 +90,8 @@ const CreatePin = () => {
         </div>
       )}
       <div
-        className={`absolute top-2 left-2 z-50 bg-blue-900 p-2 rounded-full transition-all duration-500 ease-in-out ${showMessage}`}
+        className={`absolute top-2 left-2 z-50 bg-blue p-2 rounded-md transition-all duration-500 ease-in-out`}
+        style={{ transform: showMessage ? "translateY(0rem)" : "translateY(-3rem)" }}
       >
         <p className="text-center font-bold text-xs px-2 text-white">
           Uploaded Successfully
@@ -222,7 +222,7 @@ const CreatePin = () => {
               <button
                 type="button"
                 onClick={() => savePin()}
-                className="bg-blue-500 text-white text-xs font-bold px-4 py-2 rounded-full outline-none"
+                className="bg-blue text-white text-xs font-bold px-4 py-2 rounded-md outline-none"
               >
                 Save Pin
               </button>

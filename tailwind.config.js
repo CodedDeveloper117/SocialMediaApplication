@@ -3,8 +3,17 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
+      padding: {
+        10: '10px',
+        15: '15px',
+      },
+      colors: {
+        'blue': '#03a9f4',
+      },
       margin: {
         320: '320px',
+        10: "10px",
+        60: "60px",
       },
       width: {
         190: '190px',
@@ -15,9 +24,14 @@ module.exports = {
         656: '656px',
         880: '880px',
         508: '508px',
+        30: "30px",
+        60: "60px",
+        20: "20px",
+        40: "40px",
       },
       height: {
         80: '80px',
+        100: '100px',
         340: '340px',
         370: '370px',
         420: '420px',
@@ -26,6 +40,10 @@ module.exports = {
         685: '685px',
         800: '800px',
         '90vh': '90vh',
+        30: '30px',
+        20: '20px',
+        40: "40px",
+        60: "60px",
       },
       flex: {
         0.7: '0.7 1 0%',
@@ -43,11 +61,13 @@ module.exports = {
         primary: '#FAFAFA',
         secColor: '#efefef',
         navColor: '#BEBEBE',
+        active: "#03a9f4"
       },
       backgroundColor: {
         mainColor: '#FBF8F9',
         secondaryColor: '#F0F0F0',
         blackOverlay: 'rgba(0, 0 ,0 ,0.7)',
+        primaryColor: '#03a9f4'
       },
       keyframes: {
         'slide-in': {

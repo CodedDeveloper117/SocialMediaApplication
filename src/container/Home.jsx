@@ -13,7 +13,7 @@ import Spinner from "../components/Spinner";
 
 const Home = () => {
   const [toggleSidebar, setToggleSidebar] = useState(false);
-  const user = useSelector((state) => state.user.data);
+  const user = useSelector((state) => state.user);
   const [userExists, setUserExists] = useState(true)
   const scrollRef = useRef(null);
   const dispatch = useDispatch()
@@ -24,13 +24,16 @@ const Home = () => {
     } else {
       setUserExists(false)
     }
-  }, []);
 
+  }, []);
+  //console.log(user)
   useEffect(() => {
-    //scrollRef?.current.scrollTo(0, 0);
-  }, []);
+    if(user.error) {
+      setUserExists(false)
+    }
+  }, [user]);
 
-  if(!user && userExists) return (
+  if(!user.data && userExists) return (
     <div className="w-full h-screen flex items-center justify-center" style={{ backgroundColor: "rgba(255,255,255,0.7)" }}>
       <Spinner message="Please wait while we get user information..." />
     </div>
