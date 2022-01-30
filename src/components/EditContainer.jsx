@@ -23,15 +23,16 @@ const transitionStyles = {
   exited: { opacity: 0 },
 };
 
-const EditContainer = ({ inProp, setInProp }) => {
+const EditContainer = ({ edit, inProp, setInProp }) => {
   const [showModal, setShowModal] = useState(false);
-  const [showDialog, setShowDialog] = useState(false)
+  const [showDialog, setShowDialog] = useState(false);
+  const [field, setField] = useState("");
   useEffect(() => {
     setTimeout(() => {
       setShowModal(true);
     }, 200);
   }, []);
-  const onExit = () => {};
+  const update = () => {};
   return (
     <Transition in={showModal} timeout={90}>
       {(state) => (
@@ -45,12 +46,11 @@ const EditContainer = ({ inProp, setInProp }) => {
             className="px-2 my-2 w-340 rounded-md flex flex-col shadow-md bg-white transition-all duration-500 ease-in-out"
             style={{
               height: "fit-content",
-              transform: showModal ? 'translateY(0rem)' : 'translateY(-8rem)',
-              
+              transform: showModal ? "translateY(0rem)" : "translateY(-8rem)",
             }}
           >
             <div className="flex justify-between items-center my-2">
-              <h3 className="text-sm font-extrabold">Edit your bio</h3>
+              <h3 className="text-sm font-extrabold">Edit your {edit.type}</h3>
               <div
                 className="rounded-full p-2 shadow-md cursor-pointer"
                 onClick={() => {
@@ -67,15 +67,22 @@ const EditContainer = ({ inProp, setInProp }) => {
               type="text"
               className="outline-none border rounded-sm px-2 py-1 w-full bg-gray-50"
               style={{ fontSize: "0.7rem" }}
-              placeholder="Add your destination link... or leave blank"
-              value={""}
-              onChange={(e) => {}}
+              placeholder={`Please enter your ${edit.type}... or leave blank`}
+              value={field}
+              onChange={(e) => setField(e.target.value)}
               rows={5}
             />
             <button
               className="outline-none border-none text-white my-2 self-end bg-blue rounded-md shadow-md font-extrabold text-sm py-1 px-2"
               type="button"
               style={{ width: "fit-content" }}
+              onClick={() => {
+                setShowModal(false);
+                setTimeout(() => {
+                  setInProp(false);
+                }, 200);
+                edit.update(field);
+              }}
             >
               Submit
             </button>

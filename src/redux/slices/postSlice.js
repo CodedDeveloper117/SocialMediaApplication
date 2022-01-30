@@ -21,6 +21,7 @@ const postSlice = createSlice({
           state.loading = true;
           state.currentRequestId = action.meta.requestId;
           state.createOperationSuccess = false;
+          state.data = null;
         }
       })
       .addCase(createPost.fulfilled, (state, action) => {
@@ -30,6 +31,7 @@ const postSlice = createSlice({
           state.data = action.payload;
           state.currentRequestId = "";
           state.createOperationSuccess = true;
+          
         }
       })
       .addCase(createPost.rejected, (state, action) => {
@@ -38,6 +40,7 @@ const postSlice = createSlice({
           state.loading = false;
           state.error = { ...action.error, err: action.payload };
           state.currentRequestId = "";
+          state.data = null;
           state.createOperationSuccess = false;
         }
       })
@@ -46,6 +49,7 @@ const postSlice = createSlice({
           state.loading = true;
           state.currentRequestId = action.meta.requestId;
           state.error = null
+          state.data = null;
         }
       })
       .addCase(getPosts.fulfilled, (state, action) => {
@@ -53,7 +57,11 @@ const postSlice = createSlice({
         if (state.loading && state.currentRequestId === requestId) {
           state.loading = false;
           state.currentRequestId = "";
-          state.posts.push(...action.payload)
+          if(action.payload.refresh) {
+            state.posts = action.payload.posts
+          } else {
+            state.posts.push(...action.payload)
+          }
           state.error = null
         }
       })

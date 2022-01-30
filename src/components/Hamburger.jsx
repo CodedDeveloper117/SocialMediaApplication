@@ -7,13 +7,11 @@ const Hamburger = ({ setActive, active }) => {
   return (
     <div
       onClick={onClick}
-      className="relative flex items-center justify-center rounded-md shadow-md cursor-pointer mt-2"
+      className="relative flex items-center justify-center rounded-md shadow-md cursor-pointer"
       style={{
         width: "40px",
         height: "40px",
         backgroundColor: "#03a9f4",
-        marginLeft: "10px",
-        marginRight: "10px",
       }}
     >
       <div

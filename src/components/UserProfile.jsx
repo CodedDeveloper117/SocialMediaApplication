@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { AiOutlineLogout, AiOutlineEdit } from "react-icons/ai";
-import { IoCreateOutline } from "react-icons/io5";
+import { IoCameraOutline, IoCreateOutline } from "react-icons/io5";
 import { useParams, useNavigate } from "react-router-dom";
 import { GoogleLogout } from "react-google-login";
 import { client } from "../utils/client";
@@ -11,6 +11,7 @@ import { userQuery } from "../utils/data";
 import MasonryLayout from "./MasonryLayout";
 import Spinner from "./Spinner";
 import EditContainer from "./EditContainer";
+import { MAX_FILE_SIZE } from "../utils/constants";
 
 const activeBtnStyles =
   "bg-red-500 text-white text-xs font-bold p-2 rounded-full outline-none transition-all duration-500ms";
@@ -26,8 +27,14 @@ const UserProfile = () => {
   const navigate = useNavigate();
   const { userId } = useParams();
   const [loading, setLoading] = useState(true);
-  const [inProp, setInProp] = useState(false)
-  const [showModal, setShowModal] = useState(false)
+  const [inProp, setInProp] = useState(false);
+  const [edit, setEdit] = useState({});
+  const [showModal, setShowModal] = useState(false);
+  const [showCamera, setShowCamera] = useState(false);
+  const [messageProps, setMessageProps] = useState({
+    message: "",
+    show: false,
+  });
 
   useEffect(() => {
     setLoading(true);
@@ -60,10 +67,63 @@ const UserProfile = () => {
     navigate("/login");
   };
 
+  const updateField = (type) => {
+    setEdit({
+      type,
+      update: async (field) => {
+        console.log(field, type, user._id);
+        setLoading(true);
+        client
+          .patch(user._id)
+          .set({ [type]: field })
+          .commit()
+          .then((data) => {
+            setUser(data);
+            setLoading(false);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      },
+    });
+    setInProp(true);
+  };
+
+  const uploadImage = (e) => {
+    const file = e.target.files[0];
+    if (
+      file &&
+      (file.type === "image/png" ||
+        file.type === "image/svg" ||
+        file.type === "image/jpeg" ||
+        file.type === "image/gif" ||
+        file.type === "image/tiff")
+    ) {
+      if (file.size > MAX_FILE_SIZE) {
+        setMessageProps({
+          show: true,
+          message: "File is to big, it should not be more than 5MB",
+        });
+        setTimeout(() => {
+          setMessageProps({
+            show: false,
+            message: "File is to big, it should not be more than 5MB",
+          });
+        }, 3000);
+      } else {
+      }
+    } else {
+      setMessageProps({ show: true, message: "Wrong Image Type" });
+      setTimeout(() => {
+        setMessageProps({ show: false, message: messageProps.message });
+      }, 3000);
+    }
+  };
+
   if (loading && !user) {
-    console.log("user")
+    console.log("user");
     return (
-      <div className="w-full h-full justify-center items-center">
+      <div className="w-full h-full justify-center items-center z-100">
         <Spinner message="Loading profile..." />
       </div>
     );
@@ -72,8 +132,29 @@ const UserProfile = () => {
   return (
     <div className="relative pb-2 h-full justify-center items-center">
       {inProp && (
-        <EditContainer inProp={inProp} setInProp={setInProp} />
+        <EditContainer edit={edit} inProp={inProp} setInProp={setInProp} />
       )}
+      {loading && (
+        <div
+          className="w-full h-full justify-center items-center fixed top-0 text-white left-0 w-full h-full"
+          style={{ backgroundColor: "rgba(0,0,0,0.5)", zIndex: "100" }}
+        >
+          <Spinner message="Updating profile..." />
+        </div>
+      )}
+      <div
+        className={`fixed top-2 left-2 bg-red-500 p-2 rounded-md transition-all duration-500 ease-in-out`}
+        style={{
+          transform: messageProps.show
+            ? "translateY(0rem)"
+            : "translateY(-3rem)",
+          zIndex: "999",
+        }}
+      >
+        <p className="text-center font-bold text-xs px-2 text-white">
+          {messageProps.message}
+        </p>
+      </div>
       <div className="flex flex-col pb-5">
         <div className="relative flex flex-col mb-7">
           <div className="flex flex-col justify-center items-center">
@@ -82,20 +163,42 @@ const UserProfile = () => {
               src="https://source.unsplash.com/1600x900/?nature,photography,technology"
               alt="user-pic"
             />
-            <img
-              className="rounded-full w-60 h-60 -mt-10 shadow-xl object-cover"
-              src={user.image}
-              alt="user-pic"
-            />
+            <div
+              className="w-60 h-60 -mt-10 shadow-xl rounded-full relative overflow-hidden cursor-pointer"
+              onMouseEnter={() => setShowCamera(true)}
+              onMouseLeave={() => setShowCamera(false)}
+              onClick={() => {}}
+            >
+              <img
+                className="rounded-full w-60 h-60 object-cover"
+                src={user.image}
+                alt="user-pic"
+              />
+              <label
+                className={`${
+                  showCamera ? "opacity-100" : "opacity-0"
+                } transition-all duration-200 ease-in-out rounded-full w-60 h-60 absolute top-0 left-0 flex flex-col items-center justify-center bg-zinc-900/25`}
+                htmlFor="upload"
+              >
+                <IoCreateOutline fontSize={25} color="white" />
+                <input
+                  type="file"
+                  name="upload-image"
+                  id="upload"
+                  onChange={(e) => {
+                    uploadImage(e);
+                  }}
+                  className="w-0 h-0"
+                />
+              </label>
+            </div>
           </div>
           <h1 className="font-bold text-sm text-center mt-3 flex items-center justify-center gap-1">
             {user.username}
             <button
               type="button"
               className="bg-white p-1 rounded-full cursor-pointer outline-none"
-              onClick={() => {
-                setInProp(true)
-              }}
+              onClick={() => updateField("username")}
             >
               <IoCreateOutline fontSize={16} />
             </button>
@@ -105,9 +208,7 @@ const UserProfile = () => {
             <button
               type="button"
               className="bg-white p-1 rounded-full cursor-pointer outline-none"
-              onClick={() => {
-                setInProp(true)
-              }}
+              onClick={() => updateField("bio")}
             >
               <IoCreateOutline fontSize={16} />
             </button>
@@ -162,9 +263,9 @@ const UserProfile = () => {
           </button>
         </div>
 
-        <div className="px-2">
+        {/* <div className="px-2">
           <MasonryLayout />
-        </div>
+        </div> */}
 
         {1 === 0 && (
           <div className="flex justify-center font-bold items-center w-full mt-2">

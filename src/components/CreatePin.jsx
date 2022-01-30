@@ -6,6 +6,7 @@ import { categories } from "../utils/categories";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { createPost } from "../redux/slices/posts/createPost";
+import { MAX_FILE_SIZE } from "../utils/constants";
 
 const image =
   "https://cdn.pixabay.com/photo/2022/01/18/16/49/town-6947538__340.jpg";
@@ -27,9 +28,10 @@ const CreatePin = () => {
   const user = useSelector((state) => state.user.data);
   const posts = useSelector((state) => state.posts);
   const [showMessage, setShowMessage] = useState(false);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
-    if (posts.loading === false && posts.createOperationSuccess) {
+    if (posts.loading === false && posts.createOperationSuccess && posts.data) {
       setShowMessage(true);
       setTimeout(() => {
         setShowMessage(false);
@@ -46,13 +48,20 @@ const CreatePin = () => {
       selectedFile.type === "image/gif" ||
       selectedFile.type === "image/tiff"
     ) {
-      setWrongImageType(false);
-      const url = URL.createObjectURL(selectedFile);
-      setImageAsset({
-        file: selectedFile,
-        url,
-      });
+      if (selectedFile.size > MAX_FILE_SIZE) {
+        setMessage("File is to big, it should not be more than 5MB");
+        setWrongImageType(true);
+        setImageAsset(null);
+      } else {
+        setWrongImageType(false);
+        const url = URL.createObjectURL(selectedFile);
+        setImageAsset({
+          file: selectedFile,
+          url,
+        });
+      }
     } else {
+      setMessage("Wrong Image Type");
       setWrongImageType(true);
       setImageAsset(null);
     }
@@ -90,8 +99,10 @@ const CreatePin = () => {
         </div>
       )}
       <div
-        className={`absolute top-2 left-2 z-50 bg-blue p-2 rounded-md transition-all duration-500 ease-in-out`}
-        style={{ transform: showMessage ? "translateY(0rem)" : "translateY(-3rem)" }}
+        className={`absolute top-2 -translate-y-3 left-2 z-50 bg-blue p-2 rounded-md transition-all duration-500 ease-in-out`}
+        style={{
+          transform: showMessage ? "translateY(0rem)" : "translateY(-3rem)",
+        }}
       >
         <p className="text-center font-bold text-xs px-2 text-white">
           Uploaded Successfully
@@ -99,7 +110,9 @@ const CreatePin = () => {
       </div>
       <p
         className="bg-red-500 text-white p-1 rounded-md absolute top-1 left-1 mb-5 text-xs transition-all duration-500 ease-in z-10"
-        style={{ transform: fields ? "translateY(0rem)" : "translateY(-2.5rem)" }}
+        style={{
+          transform: fields ? "translateY(0rem)" : "translateY(-2.5rem)",
+        }}
       >
         Please add all fields.
       </p>
@@ -107,7 +120,7 @@ const CreatePin = () => {
         <div className="w-full h-full bg-secondaryColor flex-1 p-2 relative rounded-md">
           {wrongImageType && (
             <p className="absolute top-5 left-5 text-xs text-red-500">
-              It&apos;s wrong file type.
+              {message}
             </p>
           )}
           <div
@@ -126,7 +139,7 @@ const CreatePin = () => {
 
                   <p className="mt-32 text-gray-400 text-xs">
                     Recommendation: Use high-quality JPG, JPEG, SVG, PNG, GIF or
-                    TIFF less than 20MB
+                    TIFF less than 7MB
                   </p>
                 </div>
                 <input

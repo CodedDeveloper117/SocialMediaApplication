@@ -4,32 +4,31 @@ import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import shareVideo from "../assets/share.mp4";
 import logo from "../assets/logowhite.png";
-import { useDispatch } from 'react-redux'
+import { useDispatch } from "react-redux";
 import { createUser } from "../redux/slices/userSlice";
-import { useSelector } from 'react-redux'
+import { useSelector } from "react-redux";
 import Spinner from "./Spinner";
 
 const Login = () => {
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
-  const state = useSelector(state => state.user);
-  const [firstLaunch, setFirstLaunch] = useState(false)
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const state = useSelector((state) => state.user);
+  const [firstLaunch, setFirstLaunch] = useState(false);
   useEffect(() => {
-    if(state.data !== null && firstLaunch) {
-      navigate("/")
+    if (state.data !== null && firstLaunch) {
+      navigate("/");
     } else {
-
     }
-  }, [state])
+  }, [state]);
   const successResponse = (response) => {
-    setFirstLaunch(true)
-    dispatch(createUser(response.profileObj))
-  }
+    console.log(response);
+    setFirstLaunch(true);
+    dispatch(createUser(response.profileObj));
+  };
 
   const failureResponse = (response) => {
     console.log(response);
-    
-  }
+  };
 
   return (
     <div className="flex relative justify-start items-center flex-col h-screen">
@@ -55,15 +54,21 @@ const Login = () => {
           <GoogleLogin
             clientId={process.env.REACT_APP_GOOGLE_API_TOKEN}
             render={(renderProps) => (
-              <button
-                onClick={renderProps.onClick}
-                disabled={renderProps.disabled}
-                type="button"
-                className="bg-mainColor flex justify-center items-center p-3 rounded-lg cursor-pointer outline-none"
-              >
-                <FcGoogle className="mr-4" />
-                Sign in with Google
-              </button>
+              user.loading ? (
+                <div className="rounded-lg p-3 border-blue border-2 bg-transparent">
+                  <Spinner message="We're waiting as you set up your" />
+                </div>
+              ) : (
+                <button
+                  onClick={renderProps.onClick}
+                  disabled={renderProps.disabled}
+                  type="button"
+                  className="bg-mainColor flex justify-center items-center p-3 rounded-lg cursor-pointer outline-none"
+                >
+                  <FcGoogle className="mr-4" />
+                  Sign in with Google
+                </button>
+              )
             )}
             onSuccess={successResponse}
             onFailure={failureResponse}

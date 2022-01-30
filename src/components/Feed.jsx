@@ -12,10 +12,14 @@ const Feed = () => {
   const dispatch = useDispatch();
   const state = useSelector((state) => state.posts);
 
+  const refresh = () => {
+    dispatch(getPosts({ pageSize: 30, refresh: true }))
+  }
+
   useEffect(() => {
     if (categoryId) {
     } else {
-      dispatch(getPosts({ pageSize: 30 }));
+      dispatch(getPosts({ pageSize: 30, refresh: true }));
     }
   }, [categoryId]);
 
@@ -55,7 +59,7 @@ const Feed = () => {
 
   return (
     <div>
-      <MasonryLayout posts={state.posts} />
+      <MasonryLayout posts={state.posts} refresh={refresh} />
     </div>
   );
 };
