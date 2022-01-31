@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUser } from "../redux/slices/userSlice";
 import Spinner from "../components/Spinner";
 import Hamburger from "../components/Hamburger";
+import NotFound from "../components/NotFound";
 
 const Home = ({ setLoggedOut }) => {
   const [active, setActive] = useState(false);
@@ -94,6 +95,7 @@ const Home = ({ setLoggedOut }) => {
             <Route path="pin-detail/:pinId" element={<PinDetail />} />
             <Route path="create-pin" element={<CreatePin />} />
             <Route path="search" element={<Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />} />
+            <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
       </div>
