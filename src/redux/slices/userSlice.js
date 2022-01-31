@@ -39,6 +39,10 @@ export const getUser = createAsyncThunk(
         }
         return rejectWithValue("user doesn't exist")
       } catch (err) {
+        if(err.isNetworkError) {
+          console.log(err.isNetworkError)
+          return rejectWithValue("Network Error")
+        }
         console.log(err)
         return rejectWithValue(err);
       }

@@ -5,6 +5,7 @@ import { Link, Route, Routes, Navigate } from "react-router-dom";
 import { NavBar, PinDetail, CreatePin, Search, Feed } from "../components";
 import { Sidebar, UserProfile } from "../components";
 import logo from "../assets/logo.png";
+import Logo from '../assets/Logo'
 import Pins from "./Pins";
 import { useDispatch, useSelector } from "react-redux";
 import { userQuery } from "../utils/data";
@@ -17,6 +18,7 @@ const Home = () => {
   const user = useSelector((state) => state.user);
   const [userExists, setUserExists] = useState(true);
   const scrollRef = useRef(null);
+  const [searchTerm, setSearchTerm] = useState("")
   const dispatch = useDispatch();
   useEffect(() => {
     const userID = localStorage.getItem("userID", null);
@@ -62,9 +64,9 @@ const Home = () => {
             active={active}
           />
           <Link to="/">
-            <img src={logo} alt="logo" className="w-28 inline-block" />
+            <Logo />
           </Link>
-          <Link to={`user-profile/${user?._id}`}>
+          <Link to={`user-profile/${user?.data._id}`}>
             <img className="w-7 rounded-full inline-block" src={user.data.image} />
           </Link>
         </div>
@@ -90,12 +92,12 @@ const Home = () => {
       >
         <Routes>
           <Route path="/user-profile/:userId" element={<UserProfile />} />
-          <Route path="/" element={<Pins user={user && user} />}>
+          <Route path="/" element={<Pins user={user} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />}>
             <Route path="/" element={<Feed />} />
             <Route path="category/:categoryId" element={<Feed />} />
             <Route path="pin-detail/:pinId" element={<PinDetail />} />
             <Route path="create-pin" element={<CreatePin />} />
-            <Route path="search" element={<Search />} />
+            <Route path="search" element={<Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />} />
           </Route>
         </Routes>
       </div>

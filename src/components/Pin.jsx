@@ -31,7 +31,7 @@ const Pin = ({ post, lastItem, refresh }) => {
   const navigate = useNavigate();
   const [savingPost, setSavingPost] = useState(false);
   const [destinationHovered, setDestinationHovered] = useState(false);
-  const { _id, image } = post;
+  const { _id, image, destination } = post;
   const url = image.image.asset.url;
   const user = useSelector((state) => state.user.data);
   let alreadySaved = post.save?.filter((item) => item?.userId === user._id);
@@ -103,7 +103,7 @@ const Pin = ({ post, lastItem, refresh }) => {
             <div className="flex items-center justify-between">
               <div className="flex justify-center items-center">
                 <a
-                  href={`${image}?dl=`}
+                  href={`${url}?dl=`}
                   className="bg-white hover:opacity-100 hover:shadow-md outline-none rounded-full text-dark text-md w-6 h-6 items-center flex justify-center opacity-75"
                   download
                   onClick={(e) => e.stopPropagation()}
@@ -133,7 +133,7 @@ const Pin = ({ post, lastItem, refresh }) => {
             </div>
             <div className="flex justify-between items-center gap-2 w-full">
               <a
-                href="destination"
+                href={`${destination}`}
                 target="black"
                 rel="noreferrer"
                 onMouseEnter={() => {
@@ -152,8 +152,9 @@ const Pin = ({ post, lastItem, refresh }) => {
                     maxLines: 1,
                     whiteSpace: "nowrap",
                     fontSize: "0.55rem",
-                    width: destinationHovered ? "110px" : "0px",
+                    maxWidth: destinationHovered ? "110px" : "0px",
                     transition: "all 500ms ease-in-out",
+                    padding: destinationHovered ? '0px 5px' : "0px"
                   }}
                 >
                   {post.destination}

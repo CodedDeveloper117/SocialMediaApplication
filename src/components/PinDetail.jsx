@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { MdDownloadForOffline } from "react-icons/md";
-import { IoHeartOutline, IoHeart } from 'react-icons/io5'
+import { IoHeartOutline, IoHeart } from "react-icons/io5";
 import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { v4 as uuidV4 } from "uuid";
@@ -17,18 +17,18 @@ const PinDetail = () => {
   const [loading, setLoading] = useState(false);
   const [post, setPost] = useState(null);
   const [postingComment, setPostingComment] = useState(false);
-  const [posts, setPosts] = useState([])
-  const [getPostsLoading, setGetPostsLoading] = useState(false)
+  const [posts, setPosts] = useState([]);
+  const [getPostsLoading, setGetPostsLoading] = useState(false);
 
   useEffect(() => {
     getPost();
-  }, []);
+  }, [pinId]);
 
   useEffect(() => {
-    if(post) {
-      getPosts()
+    if (post) {
+      getPosts();
     }
-  }, [post])
+  }, [post]);
 
   const getPosts = () => {
     const query = getMorePostsQuery(post, 30);
@@ -36,15 +36,15 @@ const PinDetail = () => {
     client
       .fetch(query)
       .then((data) => {
-        console.log(data)
-        //setPosts(data);
+        console.log(data);
+        setPosts(data);
         setGetPostsLoading(false);
       })
       .catch((err) => {
         setError(err);
         setLoading(false);
       });
-  }
+  };
 
   const getPost = () => {
     const query = postQuery(pinId);
@@ -127,14 +127,14 @@ const PinDetail = () => {
           <div className="flex items-center justify-between">
             <div className="flex gap-2 items-center">
               <a
-                href={``}
+                href={`${post?.image?.image.asset.url}?dl=`}
                 download
                 className="bg-secondaryColor p-2 text-xl rounded-full flex items-center justify-center text-dark opacity-75 hover:opacity-100"
               >
                 <MdDownloadForOffline />
               </a>
             </div>
-            <a href={""} target="_blank" rel="noreferrer">
+            <a href={post?.destination} className="hover:text-blue font-bold" target="_blank" rel="noreferrer">
               {post?.destination}
             </a>
           </div>
@@ -183,14 +183,14 @@ const PinDetail = () => {
             No Comments for this posts
           </p>
         )}
-        {post?.comment?.length > 8 && (
+        {/* {post?.comment?.length > 8 && (
           <p
             className="font-bold text-sm hover:text-blue self-end inline-block cursor-pointer"
             onClick={() => {}}
           >
             See more...
           </p>
-        )}
+        )} */}
       </div>
       <div className="flex mt-2 gap-3">
         <Link to={`/user-profile/`}>
@@ -225,7 +225,7 @@ const PinDetail = () => {
           </button>
         )}
       </div>
-      {3 > 0 && (
+      {posts.length > 0 && (
         <h2 className="text-center font-bold text-md mt-8 mb-4">
           More like this
         </h2>
@@ -233,17 +233,7 @@ const PinDetail = () => {
       {getPostsLoading ? (
         <Spinner message="Loading more posts..." />
       ) : (
-        
-          posts.length > 0 ? (
-            <MasonryLayout posts={posts} refresh={() => {}} />
-          ) : (
-            <p
-            className="font-bold text-sm self-end text-center"
-          >
-            No Posts
-          </p>
-          )
-        
+        posts.length > 0 && <MasonryLayout posts={posts} refresh={() => {}} />
       )}
     </>
   );

@@ -4,7 +4,11 @@ import { IoCameraOutline, IoCreateOutline } from "react-icons/io5";
 import { useParams, useNavigate } from "react-router-dom";
 import { GoogleLogout } from "react-google-login";
 import { client } from "../utils/client";
-import { userQuery } from "../utils/data";
+import {
+  userCreatedPinsQuery,
+  userQuery,
+  userSavedPinsQuery,
+} from "../utils/data";
 
 //import { userCreatedPinsQuery, userQuery, userSavedPinsQuery } from '../utils/data';
 //import { client } from '../client';
@@ -14,9 +18,8 @@ import EditContainer from "./EditContainer";
 import { MAX_FILE_SIZE } from "../utils/constants";
 
 const activeBtnStyles =
-  "bg-red-500 text-white text-xs font-bold p-2 rounded-full outline-none transition-all duration-500ms";
-const notActiveBtnStyles =
-  "bg-primary text-xs text-black font-bold p-2 rounded-full outline-none";
+  "text-blue text-xs font-bold p-2 border-b-2 border-blue outline-none transition-all duration-500ms";
+const notActiveBtnStyles = "text-xs text-black font-bold p-2 outline-none";
 const image =
   "https://cdn.pixabay.com/photo/2022/01/18/16/49/town-6947538__340.jpg";
 const UserProfile = () => {
@@ -35,6 +38,9 @@ const UserProfile = () => {
     message: "",
     show: false,
   });
+  const [pinsLoading, setPinsLoading] = useState(false);
+
+  const getPosts = () => {};
 
   useEffect(() => {
     setLoading(true);
@@ -47,19 +53,23 @@ const UserProfile = () => {
   }, []);
 
   useEffect(() => {
-    /* if (text === 'Created') {
+    if (text === "Created") {
+      setPinsLoading(true);
       const createdPinsQuery = userCreatedPinsQuery(userId);
 
       client.fetch(createdPinsQuery).then((data) => {
         setPins(data);
+        setPinsLoading(false);
       });
     } else {
+      setPinsLoading(true);
       const savedPinsQuery = userSavedPinsQuery(userId);
 
       client.fetch(savedPinsQuery).then((data) => {
         setPins(data);
+        setPinsLoading(false);
       });
-    } */
+    }
   }, [text, userId]);
   const logout = () => {
     localStorage.clear();
@@ -263,11 +273,19 @@ const UserProfile = () => {
           </button>
         </div>
 
-        {/* <div className="px-2">
-          <MasonryLayout />
-        </div> */}
+        {pinsLoading && (
+          <div className="h-screen w-full flex items-center justify-center">
+            <Spinner message="Please wait as we get your posts..." />
+          </div>
+        )}
 
-        {1 === 0 && (
+        {pins?.length > 0 && (
+          <div className="px-2">
+            <MasonryLayout posts={pins} refresh={() => {}} />
+          </div>
+        )}
+
+        {pins?.length === 0 && (
           <div className="flex justify-center font-bold items-center w-full mt-2">
             No Pins Found!
           </div>

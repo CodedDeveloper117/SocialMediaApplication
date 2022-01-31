@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import { createUser } from "../redux/slices/userSlice";
 import { useSelector } from "react-redux";
 import Spinner from "./Spinner";
+import Logo from "../assets/Logo";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -48,13 +49,13 @@ const Login = () => {
       </div>
       <div className="absolute flex justify-center items-center top-0 bottom-0 right-0 flex-col bg-blackOverlay left-0">
         <div className="p-5">
-          <img src={logo} width="130px" alt="logo" />
+          <Logo />
         </div>
         <div className="shadow-2xl">
           <GoogleLogin
             clientId={process.env.REACT_APP_GOOGLE_API_TOKEN}
             render={(renderProps) => (
-              user.loading ? (
+              state.loading ? (
                 <div className="rounded-lg p-3 border-blue border-2 bg-transparent">
                   <Spinner message="We're waiting as you set up your" />
                 </div>

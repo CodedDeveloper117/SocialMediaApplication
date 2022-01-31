@@ -51,6 +51,9 @@ const Sidebar = ({ user, setActive, active, mdAndBelow = false }) => {
                 isActive ? isActiveStyle : isNotActiveStyle
               }`
             }
+            onClick={() => {
+              if(mdAndBelow) setActive(false)
+            }}
           >
             <IoHomeOutline className="flex self-center" fontSize={30} />
             <p className="absolute left-[60px] text-sm font-bold">Home</p>
@@ -64,6 +67,9 @@ const Sidebar = ({ user, setActive, active, mdAndBelow = false }) => {
                   isActive ? isActiveStyle : isNotActiveStyle
                 }`
               }
+              onClick={() => {
+                if(mdAndBelow) setActive(false)
+              }}
               key={category.name}
             >
               <img

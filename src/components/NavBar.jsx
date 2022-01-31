@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { IoSearch, IoAdd } from "react-icons/io5";
 import { useSelector } from "react-redux";
 
-const NavBar = () => {
+const NavBar = ({searchTerm, setSearchTerm}) => {
   const navigate = useNavigate();
   const user = useSelector(state => state.user)
   console.log(user.data.image)
@@ -16,11 +16,11 @@ const NavBar = () => {
         <IoSearch fontSize={20} className="ml-1" />
         <input
           type="text"
-          onChange={(e) => {}}
+          onChange={(e) => setSearchTerm(e.target.value)}
           className="p-2 w-full bg-white outline-none text-xs"
           placeholder="Search"
           onFocus={() => navigate("/search")}
-          value=""
+          value={searchTerm}
         />
       </div>
       <div className="flex gap-3 items-center">
