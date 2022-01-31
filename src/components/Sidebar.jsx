@@ -1,12 +1,9 @@
-import React, { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
-import { RiHomeFill } from "react-icons/ri";
-import { IoHomeOutline } from "react-icons/io5";
-import { IoIosArrowForward } from "react-icons/io";
-import logo from "../assets/logo.png";
+import React from "react";
+import { NavLink } from "react-router-dom";
 import { categories } from "../utils/categories";
 import Hamburger from "./Hamburger";
 import { MdClose } from "react-icons/md";
+import { IoHomeOutline } from "react-icons/io5";
 const isNotActiveStyle =
   "flex items-center gap-2 text-gray-500 text-xs hover:text-black transition-all duration-200 ease-in-out capitalize";
 const isActiveStyle =

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { v4 as uuidV4 } from "uuid";
 import {
-  IoDownload,
   IoDownloadOutline,
   IoBookmarkOutline,
   IoBookmark,
@@ -9,24 +8,11 @@ import {
   IoTrashOutline,
 } from "react-icons/io5";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { client, urlFor } from "../utils/client";
 import Spinner from "../components/Spinner";
 
-const images = [
-  "https://cdn.pixabay.com/photo/2022/01/18/16/49/town-6947538__340.jpg",
-  "https://cdn.pixabay.com/photo/2018/11/10/22/57/mountain-3807667__340.jpg",
-  "https://cdn.pixabay.com/photo/2022/01/10/15/29/wind-mills-6928590__340.jpg",
-  "https://cdn.pixabay.com/photo/2021/12/15/20/21/sea-6873335__340.jpg",
-  "https://cdn.pixabay.com/photo/2022/01/17/09/28/spider-webs-6944213__340.jpg",
-  "https://cdn.pixabay.com/photo/2021/12/16/15/26/forest-6874717__340.jpg",
-  "https://cdn.pixabay.com/photo/2022/01/16/13/25/cityscape-6942013__340.jpg",
-  "https://cdn.pixabay.com/photo/2021/12/28/11/36/castle-6899041__340.jpg",
-  "https://cdn.pixabay.com/photo/2022/01/18/23/31/farm-6948514__340.jpg",
-  "https://cdn.pixabay.com/photo/2022/01/16/10/51/leaves-6941709__340.jpg",
-];
-
-const Pin = ({ post, lastItem, refresh }) => {
+const Pin = ({ post, lastItem, refresh, itemRef }) => {
   const [postHovered, setPostHovered] = useState(false);
   const navigate = useNavigate();
   const [savingPost, setSavingPost] = useState(false);
@@ -61,16 +47,36 @@ const Pin = ({ post, lastItem, refresh }) => {
     }
   };
 
+  const unsavePin = (id) => {
+    const query = [`save[userId == "${user._id}"]`]
+    if (alreadySaved?.length > 0) {
+      setSavingPost(true);
+      client
+        .patch(id)
+        .unset(query)
+        .commit()
+        .then((data) => {
+          console.log(data)
+          setSavingPost(false);
+          refresh();
+        });
+    }
+  };
+
   const deletePin = (id) => {
-    setSavingPost(true)
+    setSavingPost(true);
     client.delete(id).then(() => {
-      setSavingPost(false)
+      setSavingPost(false);
       refresh();
     });
   };
 
   return (
-    <div className={`${lastItem ? "" : "mr-1"} mt-1 cursor-pointer`}>
+    <div
+      id={post._id}
+      className={`${lastItem ? "" : "mr-1"} mt-1 cursor-pointer`}
+      ref={itemRef}
+    >
       <div
         onMouseEnter={() => {
           setPostHovered(true);
@@ -78,7 +84,7 @@ const Pin = ({ post, lastItem, refresh }) => {
         onMouseLeave={() => {
           setPostHovered(false);
         }}
-        className="relative cursor-zoom-in w-auto hover:shadow-lg rounded-lg overflow-hidden transition-all duration-500 ease-in-out"
+        className="relative w-auto hover:shadow-lg rounded-lg overflow-hidden transition-all duration-500 ease-in-out"
         onClick={() => navigate(`/pin-detail/${_id}`)}
       >
         <img
@@ -88,8 +94,8 @@ const Pin = ({ post, lastItem, refresh }) => {
         />
         {savingPost && (
           <div
-            className="absolute top-0 left-0 w-full h-full flex items-center justify-center z-50"
-            style={{ height: "100%" }}
+            className="text-white absolute top-0 left-0 w-full h-full flex items-center justify-center z-50"
+            style={{ height: "100%", backgroundColor: 'rgba(255,255,255,0.6)' }}
           >
             <Spinner message="" />
           </div>
@@ -123,7 +129,10 @@ const Pin = ({ post, lastItem, refresh }) => {
                 </button>
               ) : (
                 <button
-                  onClick={(e) => e.stopPropagation()}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    unsavePin(_id);
+                  }}
                   type="button"
                   className="bg-blue hover:opacity-100 hover:shadow-md outline-none rounded-full text-dark text-md w-6 h-6 items-center flex justify-center opacity-75 z-10"
                 >
@@ -154,7 +163,7 @@ const Pin = ({ post, lastItem, refresh }) => {
                     fontSize: "0.55rem",
                     maxWidth: destinationHovered ? "110px" : "0px",
                     transition: "all 500ms ease-in-out",
-                    padding: destinationHovered ? '0px 5px' : "0px"
+                    padding: destinationHovered ? "0px 5px" : "0px",
                   }}
                 >
                   {post.destination}
@@ -176,16 +185,19 @@ const Pin = ({ post, lastItem, refresh }) => {
           </div>
         )}
       </div>
-      <div className="flex items-center justify-start gap-1 mt-1 ">
+      <Link
+        to={`/user-profile/${post.author._id}`}
+        className="flex items-center justify-start gap-1 mt-1 z-10"
+      >
         <img
-          src={post.author.image}
+          src={post.author.image.includes('sanity') ? urlFor(post.author.image).url(): post.author.image}
           alt="image"
           className="object-cover w-30 h-30 rounded-full"
         />
         <p className="text-dark font-semibold text-xs">
           {post.author.username}
         </p>
-      </div>
+      </Link>
     </div>
   );
 };

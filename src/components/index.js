@@ -1,7 +1,6 @@
 export { default as Sidebar } from './Sidebar'
 export { default as UserProfile } from './UserProfile'
 export { default as NavBar } from './NavBar'
-export { default as SearchBar } from './SearchBar'
 export { default as Feed } from './Feed'
 export { default as CreatePin } from './CreatePin'
 export { default as PinDetail } from './PinDetail'

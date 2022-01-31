@@ -3,34 +3,91 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { getPosts } from "../redux/slices/posts/getPosts";
 import { client } from "../utils/client";
-import { getPostsByCategory } from "../utils/data";
+import { getPostsByCategory, getPostsQuery } from "../utils/data";
 import MasonryLayout from "./MasonryLayout";
 import Spinner from "./Spinner";
 
 const Feed = () => {
   const { categoryId } = useParams();
-  const [loading, setLoading] = useState(false);
-  const [pins, setPins] = useState();
+  const [posts, setPosts] = useState([]);
   const dispatch = useDispatch();
   const state = useSelector((state) => state.posts);
+  const [fetchNextPage, setFetchNextPage] = useState(false);
+  const [lastPageReached, setLastPageReached] = useState(false);
 
-  const refresh = () => {
-    dispatch(getPosts({ pageSize: 30, refresh: true }))
-  }
-  console.log(categoryId)
+  const initPosts = () => {
+    if (categoryId) {
+      console.log(categoryId);
+      dispatch(
+        getPosts({
+          from: 0,
+          to: 30,
+          refresh: true,
+          category: categoryId,
+        })
+      );
+    }
+    if (categoryId === undefined) {
+      dispatch(
+        getPosts({
+          from: 0,
+          to: 30,
+          refresh: true,
+        })
+      );
+    }
+  };
 
   useEffect(() => {
-    if (categoryId) {
-      console.log(categoryId)
-      dispatch(getPosts({ pageSize: 30, refresh: true, category: categoryId }))
-    } else {
-      dispatch(getPosts({ pageSize: 30, refresh: true }));
-    }
+    initPosts();
   }, [categoryId]);
 
   useEffect(() => {
-    console.log(state);
+    if (state.posts.length > 0) {
+      setPosts(state.posts);
+    }
   }, [state]);
+
+  const getMorePosts = () => {
+    if (!lastPageReached) {
+      setFetchNextPage(true);
+      if (categoryId === undefined) {
+        const query = getPostsQuery(posts.length, posts.length + 20);
+        client
+          .fetch(query)
+          .then((data) => {
+            console.log(data);
+            if (data.length === 0) {
+              setLastPageReached(true);
+            }
+            setPosts((state) => [...state, ...data]);
+            setFetchNextPage(false);
+          })
+          .catch((e) => {
+            console.log(e.message);
+          });
+      } else {
+        const query = getPostsByCategory(
+          categoryId,
+          posts.length,
+          posts.length + 20
+        );
+        client
+          .fetch(query)
+          .then((data) => {
+            console.log(data);
+            if (data.length === 0) {
+              setLastPageReached(true);
+            }
+            setPosts((state) => [...state, ...data]);
+            setFetchNextPage(false);
+          })
+          .catch((e) => {
+            console.log(e.message);
+          });
+      }
+    }
+  };
 
   if (state.loading)
     return (
@@ -42,29 +99,38 @@ const Feed = () => {
       </div>
     );
 
-  if(state.error && !state.loading) 
-  return (
-    <div
+  if (state.error && !state.loading)
+    return (
+      <div
         className="flex items-center justify-center w-full h-full z-50"
         style={{ backgroundColor: "rgba(255, 255, 255, 0.7)" }}
       >
-        <p>{state.error}</p>        
+        <p>{state.error}</p>
       </div>
-  )
+    );
 
-  if(state.posts.length === 0 && !state.loading) 
-  return (
-    <div
+  if (state.posts.length === 0 && !state.loading)
+    return (
+      <div
         className="flex items-center justify-center w-full h-full z-50"
         style={{ backgroundColor: "rgba(255, 255, 255, 0.7)" }}
       >
-        <p>Feeds are Empty...</p>        
+        <p>Feeds are Empty...</p>
       </div>
-  )
+    );
 
   return (
     <div>
-      <MasonryLayout posts={state.posts} refresh={refresh} />
+      <MasonryLayout
+        posts={state.posts}
+        refresh={initPosts}
+        getMorePosts={getMorePosts}
+      />
+      {fetchNextPage && (
+        <div className="max-h-100 mt-4">
+          <Spinner message="Please wait..." />
+        </div>
+      )}
     </div>
   );
 };

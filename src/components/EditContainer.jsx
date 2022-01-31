@@ -25,14 +25,12 @@ const transitionStyles = {
 
 const EditContainer = ({ edit, inProp, setInProp }) => {
   const [showModal, setShowModal] = useState(false);
-  const [showDialog, setShowDialog] = useState(false);
   const [field, setField] = useState("");
   useEffect(() => {
     setTimeout(() => {
       setShowModal(true);
     }, 200);
   }, []);
-  const update = () => {};
   return (
     <Transition in={showModal} timeout={90}>
       {(state) => (

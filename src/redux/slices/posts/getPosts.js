@@ -4,16 +4,16 @@ import { getPostsByCategory, getPostsQuery } from "../../../utils/data";
 
 export const getPosts = createAsyncThunk(
     "user/getPosts",
-    async ({ pageSize, refresh, category }, { rejectWithValue, fulfillWithValue }) => {
+    async ({ from, to, refresh, category }, { rejectWithValue, fulfillWithValue }) => {
       //console.log(postData)
       try {
         if(category) {
-          const query = getPostsByCategory(category)
+          const query = getPostsByCategory(category, from, to)
           const posts = await client.fetch(query)
           console.log(posts)
           return fulfillWithValue({posts, refresh, category})
         }
-        const query = getPostsQuery(pageSize)
+        const query = getPostsQuery(from, to)
         const posts = await client.fetch(query);
         console.log(posts);
   

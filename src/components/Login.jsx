@@ -3,28 +3,31 @@ import GoogleLogin from "react-google-login";
 import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import shareVideo from "../assets/share.mp4";
-import logo from "../assets/logowhite.png";
 import { useDispatch } from "react-redux";
 import { createUser } from "../redux/slices/userSlice";
 import { useSelector } from "react-redux";
 import Spinner from "./Spinner";
 import Logo from "../assets/Logo";
 
-const Login = () => {
+const Login = ({ loggedOut, setLoggedOut }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const state = useSelector((state) => state.user);
   const [firstLaunch, setFirstLaunch] = useState(false);
   useEffect(() => {
+    console.log(state)
     if (state.data !== null && firstLaunch) {
       navigate("/");
-    } else {
+      setLoggedOut(false)
+    }
+    if(loggedOut){
+      setFirstLaunch(true)
     }
   }, [state]);
   const successResponse = (response) => {
     console.log(response);
-    setFirstLaunch(true);
     dispatch(createUser(response.profileObj));
+    setFirstLaunch(true);
   };
 
   const failureResponse = (response) => {
@@ -56,8 +59,8 @@ const Login = () => {
             clientId={process.env.REACT_APP_GOOGLE_API_TOKEN}
             render={(renderProps) => (
               state.loading ? (
-                <div className="rounded-lg p-3 border-blue border-2 bg-transparent">
-                  <Spinner message="We're waiting as you set up your" />
+                <div className="rounded-lg text-white p-3 border-blue border-2 bg-transparent">
+                  <Spinner message="Please wait..." />
                 </div>
               ) : (
                 <button

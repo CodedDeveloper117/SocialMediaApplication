@@ -3,25 +3,16 @@ import Spinner from "./Spinner";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import { IoTrash } from "react-icons/io5";
 import { categories } from "../utils/categories";
-import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { createPost } from "../redux/slices/posts/createPost";
 import { MAX_FILE_SIZE } from "../utils/constants";
 
-const image =
-  "https://cdn.pixabay.com/photo/2022/01/18/16/49/town-6947538__340.jpg";
-
-const showMessageClass = "translate-y-0";
-const hideMessageClass = "-translate-y-10";
-
 const CreatePin = () => {
-  const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [about, setAbout] = useState("");
   const [destination, setDestination] = useState("");
   const [fields, setFields] = useState();
   const [category, setCategory] = useState();
-  const [loading, setLoading] = useState(false);
   const [imageAsset, setImageAsset] = useState(null);
   const [wrongImageType, setWrongImageType] = useState(false);
   const dispatch = useDispatch();

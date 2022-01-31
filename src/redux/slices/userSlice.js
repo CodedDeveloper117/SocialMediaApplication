@@ -16,8 +16,9 @@ export const createUser = createAsyncThunk(
         bio: `Hello my name is ${name} and I'm using this awesome application, you should check it out`,
         firstname: givenName,
         lastname: familyName,
+        imageId: ''
       };
-      const user = await client.createOrReplace(doc);
+      const user = await client.createIfNotExists(doc);
       localStorage.setItem("userID", user._id);
       return fulfillWithValue(user)
     } catch (err) {
@@ -57,7 +58,11 @@ const userSlice = createSlice({
     error: null,
     currentRequestId: ''
   },
-  reducers: {},
+  reducers: {
+    removeUser: (state) => {
+      state.data = null
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createUser.pending, (state, action) => {
@@ -119,4 +124,5 @@ const userSlice = createSlice({
     }
 });
 
+export const { removeUser } = userSlice.actions
 export default userSlice.reducer;

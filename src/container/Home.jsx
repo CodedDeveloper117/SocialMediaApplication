@@ -1,19 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
-import { HiMenu } from "react-icons/hi";
-import { IoClose } from "react-icons/io5";
 import { Link, Route, Routes, Navigate } from "react-router-dom";
-import { NavBar, PinDetail, CreatePin, Search, Feed } from "../components";
+import { PinDetail, CreatePin, Search, Feed } from "../components";
 import { Sidebar, UserProfile } from "../components";
-import logo from "../assets/logo.png";
 import Logo from '../assets/Logo'
 import Pins from "./Pins";
 import { useDispatch, useSelector } from "react-redux";
-import { userQuery } from "../utils/data";
 import { getUser } from "../redux/slices/userSlice";
 import Spinner from "../components/Spinner";
 import Hamburger from "../components/Hamburger";
 
-const Home = () => {
+const Home = ({ setLoggedOut }) => {
   const [active, setActive] = useState(false);
   const user = useSelector((state) => state.user);
   const [userExists, setUserExists] = useState(true);
@@ -67,7 +63,7 @@ const Home = () => {
             <Logo />
           </Link>
           <Link to={`user-profile/${user?.data._id}`}>
-            <img className="w-7 rounded-full inline-block" src={user.data.image} />
+            <img className="w-40 rounded-full inline-block" alt="user-image" src={user.data.image} />
           </Link>
         </div>
         <div
@@ -91,7 +87,7 @@ const Home = () => {
         ref={scrollRef}
       >
         <Routes>
-          <Route path="/user-profile/:userId" element={<UserProfile />} />
+          <Route path="/user-profile/:userId" element={<UserProfile setLoggedOut={setLoggedOut} />} />
           <Route path="/" element={<Pins user={user} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />}>
             <Route path="/" element={<Feed />} />
             <Route path="category/:categoryId" element={<Feed />} />

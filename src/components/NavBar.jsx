@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import SearchBar from "./SearchBar";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { IoSearch, IoAdd } from "react-icons/io5";
 import { useSelector } from "react-redux";

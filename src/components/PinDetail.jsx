@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { MdDownloadForOffline } from "react-icons/md";
-import { IoHeartOutline, IoHeart } from "react-icons/io5";
 import { useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { v4 as uuidV4 } from "uuid";
 import { client, urlFor } from "../utils/client";
-import { getMorePostsQuery, getPostsQuery, postQuery } from "../utils/data";
+import { getMorePostsQuery, postQuery } from "../utils/data";
 import MasonryLayout from "./MasonryLayout";
 import Spinner from "./Spinner";
 
@@ -20,6 +19,8 @@ const PinDetail = () => {
   const [posts, setPosts] = useState([]);
   const [getPostsLoading, setGetPostsLoading] = useState(false);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     getPost();
   }, [pinId]);
@@ -31,7 +32,7 @@ const PinDetail = () => {
   }, [post]);
 
   const getPosts = () => {
-    const query = getMorePostsQuery(post, 30);
+    const query = getMorePostsQuery(post, 0, 30);
     setGetPostsLoading(true);
     client
       .fetch(query)
@@ -233,7 +234,16 @@ const PinDetail = () => {
       {getPostsLoading ? (
         <Spinner message="Loading more posts..." />
       ) : (
-        posts.length > 0 && <MasonryLayout posts={posts} refresh={() => {}} />
+        posts.length > 0 && (
+          <div>
+          <MasonryLayout posts={posts} refresh={getPosts} />
+          {
+            posts.length > 25 && (
+              <p className="font-bold text-sm hover:text-blue cursor-pointer mt-2 mb-2" onClick={() => navigate(`/category/${post.category}`)}>See more...</p>
+            )
+          }
+          </div>
+        )
       )}
     </>
   );

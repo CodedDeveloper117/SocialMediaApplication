@@ -54,7 +54,7 @@ export const postQuery = (postId) => {
   return query;
 };
 
-export const getPostsQuery = (pageSize) => {
+export const getPostsQuery = (from, to) => {
   const query = `*[_type == 'post'] | order(_createdAt desc){ 
     _id,
     title,
@@ -84,11 +84,11 @@ export const getPostsQuery = (pageSize) => {
       userId
     },
     userId
-   }[0...${pageSize}]`;
+  }[${from}...${to}]`;
   return query;
 };
 
-export const getMorePostsQuery = (post, size) => {
+export const getMorePostsQuery = (post, from, to) => {
   const query = `*[_type == "post" && category == '${post.category}' && _id != '${post._id}']{ 
     _id,
     title,
@@ -118,11 +118,11 @@ export const getMorePostsQuery = (post, size) => {
       userId
     },
     userId
-   }`;
+   }[${from}...${to}]`;
   return query;
 };
 
-export const getPostsByCategory = (category) => {
+export const getPostsByCategory = (category, from, to) => {
   const query = `*[_type == "post" && category == '${category}']{ 
     _id,
     title,
@@ -153,11 +153,11 @@ export const getPostsByCategory = (category) => {
     },
     userId,
     likes
-   }`;
+   }[${from}...${to}]`;
   return query;
 };
 
-export const searchQuery = (term) => {
+export const searchQuery = (term, from, to) => {
   const query = `*[_type == 'post' && title match '${term}*' || category match '${term}*' || about match '${term}*']{
     _id,
     title,
@@ -186,11 +186,11 @@ export const searchQuery = (term) => {
       },
       userId
     }
-   }`;
+   }[${from}...${to}]`;
   return query;
 };
 
-export const userCreatedPinsQuery = (userId) => {
+export const userCreatedPinsQuery = (userId, from, to) => {
   const query = `*[_type == 'post' && userId == '${userId}'] | order(_createdAt desc){ 
     _id,
     title,
@@ -220,11 +220,11 @@ export const userCreatedPinsQuery = (userId) => {
       userId
     },
     userId
-   }`;
+   }[${from}...${to}]`;
   return query;
 }
 
-export const userSavedPinsQuery = (userId) => {
+export const userSavedPinsQuery = (userId, from, to) => {
   const query = `*[_type == 'post' && '${userId}' in save[].userId] | order(_createdAt desc){ 
     _id,
     title,
@@ -254,6 +254,6 @@ export const userSavedPinsQuery = (userId) => {
       userId
     },
     userId
-   }`;
+   }[${from}...${to}]`;
   return query;
 }
